@@ -2,7 +2,7 @@
 # Code was created on my own, Stefan Tippelt
 ########################################################################
 
-from imgage_optimize import recursive_optimize
+from image_optimize import recursive_optimize
 from utils import save_image
 
 layer_tensors = model.layer_tensors
@@ -30,8 +30,8 @@ def process_and_save_img(layer_tensors, image):
             print('saving image: %s' % filename)
             save_image(img_result, filename)
 
-            # TODO return dict, check how it actually works
             image_properties['filename'] = filename
+            image_properties['filename'] = {}
             image_properties['filename']['layer'] = layer_tensor.name
             image_properties['filename']['blend'] = blend_number
             print(image_properties)
