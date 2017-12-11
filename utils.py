@@ -13,86 +13,9 @@ import zipfile
 import PIL.Image
 import numpy as np
 import download
+import math
+import random
 
-
-def _print_download_progress(count, block_size, total_size):
-    """
-    Function used for printing the download progress.
-    Used as a call-back function in maybe_download_and_extract().
-    """
-
-    # Percentage completion.
-    pct_complete = float(count * block_size) / total_size
-
-    # Status-message. Note the \r which means the line should overwrite itself.
-    msg = "\r- Download progress: {0:.1%}".format(pct_complete)
-
-    # Print it.
-    sys.stdout.write(msg)
-    sys.stdout.flush()
-
-
-
-def maybe_download_and_extract(url, download_dir):
-    """
-    Download and extract the data if it doesn't already exist.
-    Assumes the url is a tar-ball file.
-
-    :param url:
-        Internet URL for the tar-file to download.
-        Example: "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
-
-    :param download_dir:
-        Directory where the downloaded file is saved.
-        Example: "data/CIFAR-10/"
-
-    :return:
-        Nothing.
-    """
-
-    # Filename for saving the file downloaded from the internet.
-    # Use the filename from the URL and add it to the download_dir.
-    filename = url.split('/')[-1]
-    file_path = os.path.join(download_dir, filename)
-
-    # Check if the file already exists.
-    # If it exists then we assume it has also been extracted,
-    # otherwise we need to download and extract it now.
-    if not os.path.exists(file_path):
-        # Check if the download directory exists, otherwise create it.
-        if not os.path.exists(download_dir):
-            os.makedirs(download_dir)
-
-        # Download the file from the internet.
-        file_path, _ = urllib.request.urlretrieve(url=url,
-                                                  filename=file_path,
-                                                  reporthook=_print_download_progress)
-
-        print()
-        print("Download finished. Extracting files.")
-
-        if file_path.endswith(".zip"):
-            # Unpack the zip-file.
-            zipfile.ZipFile(file=file_path, mode="r").extractall(download_dir)
-        elif file_path.endswith((".tar.gz", ".tgz")):
-            # Unpack the tar-ball.
-            tarfile.open(name=file_path, mode="r:gz").extractall(download_dir)
-
-        print("Done.")
-    else:
-        print("Data has apparently already been downloaded and unpacked.")
-
-
-# TODO merge the two functions
-def maybe_download():
-    """
-    Download the Inception model from the internet if it does not already
-    exist in the data_dir. The file is about 50 MB.
-    """
-
-    print("Downloading Inception 5h Model ...")
-    download.maybe_download_and_extract(url="http://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip",
-                                        download_dir="inception/5h/")
 
 
 def load_image(filename):
@@ -190,7 +113,7 @@ def get_tile_size(num_pixels, tile_size=400):
     return actual_tile_size
 
 
-def tiled_gradient(gradient, image, tile_size=400):
+def tiled_gradient(gradient, image, model, session, tile_size=400):
     # Allocate an array for the gradient of the entire image.
     grad = np.zeros_like(image)
 
@@ -259,3 +182,36 @@ def tiled_gradient(gradient, image, tile_size=400):
         x_start = x_end
 
     return grad
+
+def resize_image(image, size=None, factor=None):
+    # If a rescaling-factor is provided then use it.
+    if factor is not None:
+        # Scale the numpy array's shape for height and width.
+        size = np.array(image.shape[0:2]) * factor
+
+        # The size is floating-point because it was scaled.
+        # PIL requires the size to be integers.
+        size = size.astype(int)
+    else:
+        # Ensure the size has length 2.
+        size = size[0:2]
+
+    # The height and width is reversed in numpy vs. PIL.
+    size = tuple(reversed(size))
+
+    # Ensure the pixel-values are between 0 and 255.
+    img = np.clip(image, 0.0, 255.0)
+
+    # Convert the pixels to 8-bit bytes.
+    img = img.astype(np.uint8)
+
+    # Create PIL-object from numpy array.
+    img = PIL.Image.fromarray(img)
+
+    # Resize the image.
+    img_resized = img.resize(size, PIL.Image.LANCZOS)
+
+    # Convert 8-bit pixel values back to floating-point.
+    img_resized = np.float32(img_resized)
+
+    return img_resized

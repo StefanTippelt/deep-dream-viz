@@ -10,17 +10,17 @@ import tensorflow as tf
 import numpy as np
 import random
 import math
-import inception5h
+# import inception5h
 
 # Image manipulation.
 import PIL.Image
 from scipy.ndimage.filters import gaussian_filter
 
 # custom functions
-from utils import tiled_gradient
+from utils import tiled_gradient, resize_image
 
 
-def optimize_image(layer_tensor, image,
+def optimize_image(layer_tensor, image, model, session,
                    num_iterations=10, step_size=3.0, tile_size=400):
     """
     Use gradient ascent to optimize an image so it maximizes the
@@ -51,7 +51,7 @@ def optimize_image(layer_tensor, image,
         # Calculate the value of the gradient.
         # This tells us how to change the image so as to
         # maximize the mean of the given layer-tensor.
-        grad = tiled_gradient(gradient=gradient, image=img)
+        grad = tiled_gradient(model=model, session=session, gradient=gradient, image=img)
 
         # Blur the gradient with different amounts and add
         # them together. The blur amount is also increased
@@ -80,7 +80,7 @@ def optimize_image(layer_tensor, image,
     return img
 
 
-def recursive_optimize(layer_tensor, image,
+def recursive_optimize(layer_tensor, image, model, session,
                        num_repeats=4, rescale_factor=0.7, blend=0.2,
                        num_iterations=10, step_size=3.0,
                        tile_size=400):
@@ -118,6 +118,8 @@ def recursive_optimize(layer_tensor, image,
         # Subtract one from num_repeats and use the downscaled image.
         img_result = recursive_optimize(layer_tensor=layer_tensor,
                                         image=img_downscaled,
+                                        model=model,
+                                        session=session,
                                         num_repeats=num_repeats-1,
                                         rescale_factor=rescale_factor,
                                         blend=blend,
@@ -136,6 +138,8 @@ def recursive_optimize(layer_tensor, image,
     # Process the image using the DeepDream algorithm.
     img_result = optimize_image(layer_tensor=layer_tensor,
                                 image=image,
+                                model=model,
+                                session=session,
                                 num_iterations=num_iterations,
                                 step_size=step_size,
                                 tile_size=tile_size)
