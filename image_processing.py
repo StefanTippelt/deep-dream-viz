@@ -30,7 +30,11 @@ def process_and_save_img(output_path, image, model, session):
             utils.plot_image(img_result)
 
             # create unique filename
-            filename = 'layer_' + layer_tensor.name.replace(':', '_') + 'blend' + str(blend_number).replace('.', '_') + '.jpg'
+            filename = output_path + 'layer_' + layer_tensor.name.replace(':', '_') + \
+                       'blend' + str(blend_number).replace('.', '_') + '.jpg'
+
+            print('saving image: %s' % filename)
+            utils.save_image(img_result, filename)
 
             # store image properties to dict
             image_properties[filename] = {}
