@@ -29,7 +29,7 @@ def process_and_save_img(category, output_path, image, model, session):
 
             # create unique filename
             filename = category + '_layer_' + layer_tensor.name.replace(':', '_') + \
-                       'blend' + str(blend_number).replace('.', '_') + '.jpg'
+                       'blend' + str(round(blend_number, 2)).replace('.', '_') + '.jpg'
 
             print('saving image: %s' % filename)
             file = os.path.join(output_path, filename)
