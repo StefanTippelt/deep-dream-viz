@@ -8,7 +8,7 @@ import inception5h
 import utils
 import os
 
-def process_and_save_img(category, output_path, image, model, session):
+def process_and_save_img(input_name, category, output_path, image, model, session):
     """
     Function to process and save images to file
     """
@@ -20,7 +20,7 @@ def process_and_save_img(category, output_path, image, model, session):
         # steps = [x * 0.1 for x in range(0, 10)]
         # adjust how much the previous image is blended with the current version
         for blend_number in steps:
-            print('blend_number', blend_number)
+            print('blend_number {%.2f}'.format(blend_number))
             img_result = recursive_optimize(layer_tensor=layer_tensor, image=image,
                                             model=model, session=session,
                                             num_iterations=5, step_size=3.0,
@@ -37,10 +37,12 @@ def process_and_save_img(category, output_path, image, model, session):
             utils.save_image(img_result, filename=file)
 
             # store image properties to dict
-            image_properties[filename] = {}
-            image_properties[filename]['layer'] = layer_tensor.name
-            image_properties[filename]['blend'] = blend_number
-    print(image_properties)
+            image_properties[input_name] = {}
+            image_properties[input_name]['filename'] = filename
+            image_properties[input_name]['layer'] = layer_tensor.name
+            image_properties[input_name]['blend'] = blend_number
+
+            print(image_properties)
     return image_properties
 
 
