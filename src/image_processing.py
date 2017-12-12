@@ -17,19 +17,20 @@ def process_and_save_img(input_name, category, output_path, image, model, sessio
 
     for layer_tensor in layer_tensors:
         steps = [x * 0.2 for x in range(0, 5)]
-        # steps = [x * 0.1 for x in range(0, 10)]
+        steps_rounded = [round(x, 2) for x in steps]
+
         # adjust how much the previous image is blended with the current version
-        for blend_number in steps:
-            print('blend_number {%.2f}'.format(blend_number))
+        for blend_number in steps_rounded:
+            print('blend_number', blend_number)
             img_result = recursive_optimize(layer_tensor=layer_tensor, image=image,
                                             model=model, session=session,
-                                            num_iterations=5, step_size=3.0,
+                                            num_iterations=1, step_size=3.0,
                                             rescale_factor=0.7,
                          num_repeats=3, blend=blend_number)
 
             # create unique filename
-            filename = category + '_layer_' + layer_tensor.name.replace(':', '_') + \
-                       'blend' + str(round(blend_number, 2)).replace('.', '_') + '.jpg'
+            filename = os.path.splitext(input_name)[0] + layer_tensor.name.replace(':', '_') + \
+                       str(blend_number).replace('.', '_') + '.jpg'
 
             print('saving image: %s' % filename)
             file = os.path.join(output_path, filename)
