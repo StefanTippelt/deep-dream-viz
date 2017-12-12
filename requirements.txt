@@ -1,8 +1,6 @@
-# pip install -r requirements.txt
-# python 3.6
-
-math
-numpy
-Pillow
-tensorflow # CPU Version of TensorFlow
-jupyter
+# TODO: a separate image for gpu(tensorflow-gpu) otherwise is not going to work
+numpy==1.13.3
+Pillow==4.3.0
+tensorflow==1.4.1
+jupyter==1.0.0
+scipy==1.0.0
