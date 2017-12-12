@@ -3,20 +3,23 @@
 #
 # Copyright 2016 by Magnus Erik Hvass Pedersen
 ########################################################################
-# Code was adjusted to my own needs, Stefan Tippelt
 
-# import matplotlib.pyplot as plt
+# Code was adjusted to my own needs by removing unnecessary output of
+# intermediate steps and passing model and session as parameters to the
+# functions, Stefan Tippelt
+########################################################################
+
 import tensorflow as tf
 import numpy as np
 import random
 import math
-# import inception5h
+
 
 # Image manipulation.
 import PIL.Image
 from scipy.ndimage.filters import gaussian_filter
 
-# custom functions
+# Custom functions
 from utils import tiled_gradient, resize_image
 
 

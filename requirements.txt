@@ -1,4 +1,8 @@
-tensorflow
-numpy
-math
+# pip install -r requirements.txt
+# python 3.6
 
+math
+numpy
+Pillow
+tensorflow # CPU Version of TensorFlow
+jupyter
