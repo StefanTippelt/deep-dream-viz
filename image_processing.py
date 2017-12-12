@@ -6,8 +6,9 @@
 from image_optimize import recursive_optimize
 import inception5h
 import utils
+import os
 
-def process_and_save_img(output_path, image, model, session):
+def process_and_save_img(category, output_path, image, model, session):
     """
     Function to process and save images to file
     """
@@ -26,21 +27,20 @@ def process_and_save_img(output_path, image, model, session):
                                             rescale_factor=0.7,
                          num_repeats=3, blend=blend_number)
 
-            print("Resulting image:")
-            utils.plot_image(img_result)
-
             # create unique filename
-            filename = output_path + 'layer_' + layer_tensor.name.replace(':', '_') + \
+            filename = category + '_layer_' + layer_tensor.name.replace(':', '_') + \
                        'blend' + str(blend_number).replace('.', '_') + '.jpg'
 
             print('saving image: %s' % filename)
-            utils.save_image(img_result, filename)
+            file = os.path.join(output_path, filename)
+            if not os.path.exists(output_path): os.mkdir(output_path)
+            utils.save_image(img_result, filename=file)
 
             # store image properties to dict
             image_properties[filename] = {}
             image_properties[filename]['layer'] = layer_tensor.name
             image_properties[filename]['blend'] = blend_number
-            print(image_properties)
+    print(image_properties)
     return image_properties
 
 
