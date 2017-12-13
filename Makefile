@@ -11,5 +11,5 @@ run:
 	docker run -it \
 		-e FOO=${BAR} \
 		-p 9999:9999 \
-		-v ${PWD}/img/:/opt/deepdream/src/img/ \
+		-v ${PWD}/src/:/opt/deepdream/src/ \
 		${DOCKER_IMAGE}
