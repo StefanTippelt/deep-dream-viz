@@ -9,10 +9,9 @@
 # functions, Stefan Tippelt
 ########################################################################
 
-import tensorflow as tf
+import math
 import numpy as np
 import random
-import math
 
 
 # Image manipulation.
@@ -41,7 +40,7 @@ def optimize_image(layer_tensor, image, model, session,
     # Copy the image so we don't overwrite the original image.
     img = image.copy()
 
-    print("Processing image: ", end="")
+    print("Processing image: ")
 
     # Use TensorFlow to get the mathematical function for the
     # gradient of the given layer-tensor with regard to the
@@ -68,8 +67,8 @@ def optimize_image(layer_tensor, image, model, session,
         # input image are mostly retained in the output image.
         sigma = (i * 4.0) / num_iterations + 0.5
         grad_smooth1 = gaussian_filter(grad, sigma=sigma)
-        grad_smooth2 = gaussian_filter(grad, sigma=sigma*2)
-        grad_smooth3 = gaussian_filter(grad, sigma=sigma*0.5)
+        grad_smooth2 = gaussian_filter(grad, sigma=sigma * 2)
+        grad_smooth3 = gaussian_filter(grad, sigma=sigma * 0.5)
         grad = (grad_smooth1 + grad_smooth2 + grad_smooth3)
 
         # Scale the step-size according to the gradient-values.
@@ -106,7 +105,7 @@ def recursive_optimize(layer_tensor, image, model, session,
     """
 
     # Do a recursive step?
-    if num_repeats>0:
+    if num_repeats > 0:
         # Blur the input image to prevent artifacts when downscaling.
         # The blur amount is controlled by sigma. Note that the
         # colour-channel is not blurred as it would make the image gray.
@@ -123,7 +122,7 @@ def recursive_optimize(layer_tensor, image, model, session,
                                         image=img_downscaled,
                                         model=model,
                                         session=session,
-                                        num_repeats=num_repeats-1,
+                                        num_repeats=num_repeats - 1,
                                         rescale_factor=rescale_factor,
                                         blend=blend,
                                         num_iterations=num_iterations,
@@ -148,4 +147,3 @@ def recursive_optimize(layer_tensor, image, model, session,
                                 tile_size=tile_size)
 
     return img_result
-

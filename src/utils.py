@@ -4,23 +4,18 @@
 # Copyright 2016 by Magnus Erik Hvass Pedersen
 ########################################################################
 
-
-import sys
-import os
-import urllib.request
-import tarfile
-import zipfile
-import PIL.Image
-import numpy as np
-import download
+from IPython.display import display
+import matplotlib as plt
 import math
+import numpy as np
+import PIL.Image
 import random
-
 
 
 def load_image(filename):
     """
-    This function loads an image and returns it as a numpy array of floating-points
+    This function loads an image and returns it as a numpy array of 
+    floating-points
     """
     image = PIL.Image.open(filename)
 
@@ -29,7 +24,8 @@ def load_image(filename):
 
 def save_image(image, filename):
     """
-    Save an image as a jpeg-file. The image is given as a numpy array with pixel-values between 0 and 255.
+    Save an image as a jpeg-file. The image is given as a numpy array with 
+    pixel-values between 0 and 255.
     """
     # Ensure the pixel-values are between 0 and 255.
     image = np.clip(image, 0.0, 255.0)
@@ -44,13 +40,14 @@ def save_image(image, filename):
 
 def plot_image(image):
     """
-    This function plots an image. Using matplotlib gives low-resolution images. Using PIL gives pretty pictures.
+    This function plots an image. Using matplotlib gives low-resolution images. 
+    Using PIL gives pretty pictures.
     """
     # Assume the pixel-values are scaled between 0 and 255.
 
     if False:
         # Convert the pixel-values to the range between 0.0 and 1.0
-        image = np.clip(image/255.0, 0.0, 1.0)
+        image = np.clip(image / 255.0, 0.0, 1.0)
 
         # Plot using matplotlib.
         plt.imshow(image, interpolation='lanczos')
@@ -63,12 +60,14 @@ def plot_image(image):
         image = image.astype(np.uint8)
 
         # Convert to a PIL-image and display it.
+        # TODO: bring that back
         display(PIL.Image.fromarray(image))
 
 
 def normalize_image(x):
     """
-    Normalize an image so its values are between 0.0 and 1.0. This is useful for plotting the gradient.
+    Normalize an image so its values are between 0.0 and 1.0. This is useful 
+    for plotting the gradient.
     """
     # Get the min and max values for all pixels in the input.
     x_min = x.min()
@@ -92,11 +91,11 @@ def plot_gradient(gradient):
     plt.show()
 
 
-
 def get_tile_size(num_pixels, tile_size=400):
     """
     This is a helper-function for determining an appropriate tile-size.
-    The desired tile-size is e.g. 400x400 pixels, but the actual tile-size will depend on the image-dimensions.
+    The desired tile-size is e.g. 400x400 pixels, 
+    but the actual tile-size will depend on the image-dimensions.
     num_pixels is the number of pixels in a dimension of the image.
     tile_size is the desired tile-size.
     """
@@ -182,6 +181,7 @@ def tiled_gradient(gradient, image, model, session, tile_size=400):
         x_start = x_end
 
     return grad
+
 
 def resize_image(image, size=None, factor=None):
     # If a rescaling-factor is provided then use it.
