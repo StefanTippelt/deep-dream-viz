@@ -1,7 +1,7 @@
-########################################################################
+"""Process, blend and store images.
 
-# Code created by Stefan Tippelt
-########################################################################
+Code created by Stefan Tippelt
+"""
 
 import logging
 import os
@@ -14,16 +14,13 @@ import utils
 logging.basicConfig(filename='logfile.log', level=logging.INFO)
 
 
-
 def iteration_layers(model, speedup, session, indepth_layer=None):
     """
-    Defines the the layers whose activations are enhanced and therefore
-    visualized.
+    Define the the layers whose activations are enhanced and visualized.
 
-    :param model:
-        Inception5h model
-    :param speedup:
-        speedup selects subset of layers in order to give faster results
+    Parameters:
+        model: Inception5h model
+        speedup: selects subset of layers to give faster results
     :return:
         layer tensors to iterate through
     """
@@ -44,17 +41,20 @@ def process_and_save_img(input_name, category, output_path, image, model,
                          session, num_repeats, rescale_factor,
                          step_size, speedup=True):
     """
-    Function to process and save images to file
-    step_size default: 3.0
-    :param input_name:
-    :param category:
-    :param output_path:
-    :param image:
-    :param model:
-    :param session:
-    :param num_repeats = 3.0:
-    :param rescale_factor = 0.7:
-    :param step_size=3.0:
+    Function to process and save images to file.
+
+    Parameters
+        step_size default: 3.0
+        input_name:
+        category:
+        output_path:
+        image:
+        model:
+        session:
+        num_repeats = 3.0:
+        rescale_factor = 0.7:
+        step_size=3.0:
+    return image_properties
     """
     if speedup is True:
         num_iterations = 2
@@ -63,7 +63,8 @@ def process_and_save_img(input_name, category, output_path, image, model,
 
     image_properties = {}
     layer_tensors = iteration_layers(model, speedup, session)
-    logging.info('The following layers will be used for exploration: %s', layer_tensors)
+    logging.info('The following layers will be used for exploration: %s',
+                 layer_tensors)
 
     # iterate through defined layer tensors
     for layer_tensor in layer_tensors:
@@ -111,8 +112,10 @@ def process_and_save_img(input_name, category, output_path, image, model,
 
 def in_depth_layer_preparation(model, session, indepth_layer):
     """
-    Get tensor for in depth exploration if you already know which layer you are
-    interested in.
+    Get tensor by name for in depth exploration.
+
+    params
+    return layer_tensor
     """
     layer_tensor = session.graph.get_tensor_by_name(indepth_layer + ":0")
     return layer_tensor
@@ -121,6 +124,9 @@ def in_depth_layer_preparation(model, session, indepth_layer):
 def process_and_save_img_in_depth(input_name, indepth_layer, category,
                                   output_path, image, model, session,
                                   num_iterations, rescale_factor, num_repeats):
+    """
+    pass
+    """
     image_properties = {}
     layer_tensor = in_depth_layer_preparation(model, session, indepth_layer=indepth_layer)
     logging.info('Layer used for in depth exploration: %s', str(layer_tensor))
@@ -174,6 +180,11 @@ def process_and_save_img_in_depth(input_name, indepth_layer, category,
 def resize_secondary_image(primary_image, secondary_image):
     """
     Bring the secondary image to the same size as the primary image.
+
+    Parameters:
+        primary_image: image with desired size
+        secondary_image: image to be resized
+    return resized_secondary_image
     """
     im_primary = Image.open(primary_image)
     im_secondary = Image.open(secondary_image)
@@ -190,8 +201,18 @@ def resize_secondary_image(primary_image, secondary_image):
 def blend_images(primary_image, secondary_image, alpha, saturation_enhance,
                  contrast_enhance):
     """
-    Blends two images together after resizing the secondary one to the size of
-    the primary one.
+    Blend two images together.
+
+    After resizing the secondary one to the size of
+    the primary one
+
+    Parameters:
+        primary_image
+        secondary_image
+        alpha
+        saturation_enhance
+        contrast_enhance
+    return blended_image
     """
     # TODO: remove colors of blended image
     im_primary = Image.open(primary_image)
