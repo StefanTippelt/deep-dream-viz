@@ -9,9 +9,12 @@
 # functions, Stefan Tippelt
 ########################################################################
 
-import math
+# import math
 import numpy as np
-import random
+# import random
+import logging
+
+logging.basicConfig(filename='logfile.log', level=logging.INFO)
 
 
 # Image manipulation.
@@ -36,11 +39,10 @@ def optimize_image(layer_tensor, image, model, session,
     tile_size: Size of the tiles when calculating the gradient.
     show_gradient: Plot the gradient in each iteration.
     """
-
     # Copy the image so we don't overwrite the original image.
     img = image.copy()
 
-    print("Processing image: ")
+    # logging.INFO('Processing image: ')
 
     # Use TensorFlow to get the mathematical function for the
     # gradient of the given layer-tensor with regard to the
@@ -103,7 +105,6 @@ def recursive_optimize(layer_tensor, image, model, session,
     step_size: Scale for each step of the gradient ascent.
     tile_size: Size of the tiles when calculating the gradient.
     """
-
     # Do a recursive step?
     if num_repeats > 0:
         # Blur the input image to prevent artifacts when downscaling.
@@ -135,7 +136,7 @@ def recursive_optimize(layer_tensor, image, model, session,
         # Blend the original and processed images.
         image = blend * image + (1.0 - blend) * img_upscaled
 
-    print("Recursive level:", num_repeats)
+    # logging.INFO('Recursive level: ', num_repeats)
 
     # Process the image using the DeepDream algorithm.
     img_result = optimize_image(layer_tensor=layer_tensor,

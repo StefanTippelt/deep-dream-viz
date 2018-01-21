@@ -11,9 +11,8 @@ from PIL import Image, ImageEnhance
 
 import utils
 
+logging.basicConfig(filename='logfile.log', level=logging.INFO)
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 def iteration_layers(model, speedup, session, indepth_layer=None):
@@ -64,7 +63,7 @@ def process_and_save_img(input_name, category, output_path, image, model,
 
     image_properties = {}
     layer_tensors = iteration_layers(model, speedup, session)
-    logger.info("The following layers will be used for exploration: %s" % layer_tensors)
+    logging.info('The following layers will be used for exploration: %s', layer_tensors)
 
     # iterate through defined layer tensors
     for layer_tensor in layer_tensors:
@@ -73,7 +72,7 @@ def process_and_save_img(input_name, category, output_path, image, model,
 
         # adjust how much the previous image is blended with current version
         for blend_number in steps_rounded:
-            logger.info('blend_number', blend_number)
+            # logging.info('blend_number', blend_number)
             img_result = recursive_optimize(layer_tensor=layer_tensor,
                                             image=image,
                                             model=model,
@@ -94,7 +93,7 @@ def process_and_save_img(input_name, category, output_path, image, model,
             # create identifier to split grid into columns
             # grid_identifier = input_name_wo_extension + str(blend_number)
 
-            logger.info('saving image: %s' % filename)
+            logging.info('saving image: %s', filename)
             file = os.path.join(output_path, filename)
             if not os.path.exists(output_path):
                 os.mkdir(output_path)
@@ -106,7 +105,7 @@ def process_and_save_img(input_name, category, output_path, image, model,
             image_properties[filename]['layer'] = layer_tensor.name
             image_properties[filename]['blend'] = blend_number
 
-    logger.info(image_properties)
+    # logging.info('image_properties: ', image_properties)
     return image_properties
 
 
@@ -124,7 +123,7 @@ def process_and_save_img_in_depth(input_name, indepth_layer, category,
                                   num_iterations, rescale_factor, num_repeats):
     image_properties = {}
     layer_tensor = in_depth_layer_preparation(model, session, indepth_layer=indepth_layer)
-    logger.info("Layer used for in depth exploration: %s" % layer_tensor)
+    logging.info('Layer used for in depth exploration: %s', str(layer_tensor))
 
     step_sizes = list(range(1, 5))
     steps = [x * 0.2 for x in range(0, 5)]
@@ -132,9 +131,9 @@ def process_and_save_img_in_depth(input_name, indepth_layer, category,
 
     # adjust how much the previous image is blended with current version
     for step_size in step_sizes:
-        logger.info('step size', step_size)
+        logging.info('step size %s', step_size)
         for blend_number in steps_rounded:
-            logger.info('blend_number', blend_number)
+            logging.info('blend_number', blend_number)
 
             img_result = recursive_optimize(layer_tensor=layer_tensor,
                                             image=image,
@@ -156,7 +155,7 @@ def process_and_save_img_in_depth(input_name, indepth_layer, category,
             # create identifier to split grid into columns
             # grid_identifier = input_name_wo_extension + str(blend_number)
 
-            logger.info('saving image: %s' % filename)
+            logging.info('saving image: %s', str(filename))
             file = os.path.join(output_path, filename)
             if not os.path.exists(output_path):
                 os.mkdir(output_path)
@@ -168,13 +167,13 @@ def process_and_save_img_in_depth(input_name, indepth_layer, category,
             image_properties[filename]['step_size'] = step_size
             image_properties[filename]['blend'] = blend_number
 
-    logger.info(image_properties)
+    # logging.info('image properties:', image_properties)
     return image_properties
 
 
 def resize_secondary_image(primary_image, secondary_image):
     """
-    Brings the secondary image to the same size as the primary image.
+    Bring the secondary image to the same size as the primary image.
     """
     im_primary = Image.open(primary_image)
     im_secondary = Image.open(secondary_image)
