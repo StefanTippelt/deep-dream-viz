@@ -1,2 +1,4 @@
 .DS_Store
 logfile.log
+src/.ipynb_checkpoints/
+src/__pycache__/
