@@ -1,6 +1,6 @@
 """Process, blend and store images.
 
-Code created by Stefan Tippelt
+Published under the MIT License. See the file LICENSE for details.
 """
 
 import logging
@@ -21,9 +21,8 @@ def iteration_layers(model, speedup, session, indepth_layer=None):
 
     Parameters:
         model: Inception5h model
-        speedup: selects subset of layers to give faster results
-    :return:
-        layer tensors to iterate through
+        speedup: selects subset of layers to give results faster
+    Returns: layer tensors to iterate through
     """
     if speedup is True:
         layer_names_reduced = ['conv2d1',
@@ -45,17 +44,16 @@ def process_and_save_img(input_name, category, output_path, image, model,
     Function to process and save images to file.
 
     Parameters
-        step_size default: 3.0
-        input_name:
-        category:
-        output_path:
-        image:
-        model:
-        session:
-        num_repeats=3.0:
-        rescale_factor=0.7:
-        step_size=3.0:
-    return image_properties
+        input_name: filename of input image
+        category: category of provided image, also folder where image is stored
+        output_path: path to save the output image
+        image: loaded image using utils.load_image
+        model: deep neural net to use, default inception 5h
+        session: tensorflow session
+        num_repeats: number of times to downscale the image
+        rescale_factor: downscaling factor for the image
+        step_size: scale for each step of the gradient ascent
+    Returns: image_properties
     """
     if speedup is True:
         num_iterations = 2
@@ -67,14 +65,13 @@ def process_and_save_img(input_name, category, output_path, image, model,
     logging.info('The following layers will be used for exploration: %s',
                  layer_tensors)
 
-    # iterate through defined layer tensors
+    # Iterate through layer tensors that will be maximized
     for layer_tensor in layer_tensors:
         steps = [x * 0.2 for x in range(0, 5)]
         steps_rounded = [round(x, 2) for x in steps]
 
         # adjust how much the previous image is blended with current version
         for blend_number in steps_rounded:
-            # logging.info('blend_number', blend_number)
             img_result = recursive_optimize(layer_tensor=layer_tensor,
                                             image=image,
                                             model=model,
@@ -85,15 +82,11 @@ def process_and_save_img(input_name, category, output_path, image, model,
                                             num_repeats=num_repeats,
                                             blend=blend_number)
 
-            # create unique filename in order not to overwrite already created
-            # files
+            # create unique filename to not overwrite already created files
             input_name_wo_extension = os.path.splitext(input_name)[0]
             filename = input_name_wo_extension + \
                 layer_tensor.name.replace(':', '_') + str(blend_number)\
                 .replace('.', '_') + '.jpg'
-
-            # create identifier to split grid into columns
-            # grid_identifier = input_name_wo_extension + str(blend_number)
 
             logging.info('saving image: %s', filename)
             file = os.path.join(output_path, filename)
@@ -107,74 +100,6 @@ def process_and_save_img(input_name, category, output_path, image, model,
             image_properties[filename]['layer'] = layer_tensor.name
             image_properties[filename]['blend'] = blend_number
 
-    # logging.info('image_properties: ', image_properties)
-    return image_properties
-
-
-def in_depth_layer_preparation(model, session, indepth_layer):
-    """
-    Get tensor by name for in depth exploration.
-
-    params
-    return layer_tensor
-    """
-    layer_tensor = session.graph.get_tensor_by_name(indepth_layer + ":0")
-    return layer_tensor
-
-
-def process_and_save_img_in_depth(input_name, indepth_layer, category,
-                                  output_path, image, model, session,
-                                  num_iterations, rescale_factor, num_repeats):
-    """
-    pass
-    """
-    image_properties = {}
-    layer_tensor = in_depth_layer_preparation(model, session, indepth_layer=indepth_layer)
-    logging.info('Layer used for in depth exploration: %s', str(layer_tensor))
-
-    step_sizes = list(range(1, 5))
-    steps = [x * 0.2 for x in range(0, 5)]
-    steps_rounded = [round(x, 2) for x in steps]
-
-    # adjust how much the previous image is blended with current version
-    for step_size in step_sizes:
-        logging.info('step size %s', step_size)
-        for blend_number in steps_rounded:
-            logging.info('blend_number', blend_number)
-
-            img_result = recursive_optimize(layer_tensor=layer_tensor,
-                                            image=image,
-                                            model=model,
-                                            session=session,
-                                            num_iterations=num_iterations,
-                                            step_size=step_size,
-                                            rescale_factor=rescale_factor,
-                                            num_repeats=num_repeats,
-                                            blend=blend_number)
-
-            # create unique filename in order not to overwrite already created
-            # files
-            input_name_wo_extension = os.path.splitext(input_name)[0]
-            filename = input_name_wo_extension + \
-                layer_tensor.name.replace(':', '_') + str(blend_number)\
-                .replace('.', '_') + '_step_size_' + str(step_size) + '.jpg'
-
-            # create identifier to split grid into columns
-            # grid_identifier = input_name_wo_extension + str(blend_number)
-
-            logging.info('saving image: %s', str(filename))
-            file = os.path.join(output_path, filename)
-            if not os.path.exists(output_path):
-                os.mkdir(output_path)
-            utils.save_image(img_result, filename=file)
-
-            # store image properties to dict
-            image_properties[filename] = {}
-            image_properties[filename]['filename'] = filename
-            image_properties[filename]['step_size'] = step_size
-            image_properties[filename]['blend'] = blend_number
-
-    # logging.info('image properties:', image_properties)
     return image_properties
 
 
@@ -185,7 +110,7 @@ def resize_secondary_image(primary_image, secondary_image):
     Parameters:
         primary_image: image with desired size
         secondary_image: image to be resized
-    :return: resized_secondary_image
+    Returns: resized_secondary_image
     """
     im_primary = Image.open(primary_image)
     im_secondary = Image.open(secondary_image)
@@ -216,7 +141,7 @@ def blend_images(primary_image, secondary_image, alpha, saturation_enhance,
                a copy of the primary image is returned
         saturation_enhance: adjust image color balance
         contrast_enhance: adjust image contrast
-    :return: blended_image
+    Returns: blended_image
     """
     # TODO: remove colors of blended image
     im_primary = Image.open(primary_image)

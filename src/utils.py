@@ -14,7 +14,7 @@ import random
 
 def load_image(filename):
     """
-    This function loads an image and returns it as a numpy array of 
+    This function loads an image and returns it as a numpy array of
     floating-points
     """
     image = PIL.Image.open(filename)
@@ -24,7 +24,7 @@ def load_image(filename):
 
 def save_image(image, filename):
     """
-    Save an image as a jpeg-file. The image is given as a numpy array with 
+    Save an image as a jpeg-file. The image is given as a numpy array with
     pixel-values between 0 and 255.
     """
     # Ensure the pixel-values are between 0 and 255.
@@ -40,7 +40,7 @@ def save_image(image, filename):
 
 def plot_image(image):
     """
-    This function plots an image. Using matplotlib gives low-resolution images. 
+    This function plots an image. Using matplotlib gives low-resolution images.
     Using PIL gives pretty pictures.
     """
     # Assume the pixel-values are scaled between 0 and 255.
@@ -66,7 +66,7 @@ def plot_image(image):
 
 def normalize_image(x):
     """
-    Normalize an image so its values are between 0.0 and 1.0. This is useful 
+    Normalize an image so its values are between 0.0 and 1.0. This is useful
     for plotting the gradient.
     """
     # Get the min and max values for all pixels in the input.
@@ -94,7 +94,7 @@ def plot_gradient(gradient):
 def get_tile_size(num_pixels, tile_size=400):
     """
     This is a helper-function for determining an appropriate tile-size.
-    The desired tile-size is e.g. 400x400 pixels, 
+    The desired tile-size is e.g. 400x400 pixels,
     but the actual tile-size will depend on the image-dimensions.
     num_pixels is the number of pixels in a dimension of the image.
     tile_size is the desired tile-size.
@@ -133,7 +133,7 @@ def tiled_gradient(gradient, image, model, session, tile_size=400):
     # The random value is between -3/4 and -1/4 of the tile-size.
     # This is so the border-tiles are at least 1/4 of the tile-size,
     # otherwise the tiles may be too small which creates noisy gradients.
-    x_start = random.randint(-3*x_tile_size4, -x_tile_size4)
+    x_start = random.randint(-3 * x_tile_size4, -x_tile_size4)
 
     while x_start < x_max:
         # End-position for the current tile.
@@ -145,7 +145,7 @@ def tiled_gradient(gradient, image, model, session, tile_size=400):
 
         # Random start-position for the tiles on the y-axis.
         # The random value is between -3/4 and -1/4 of the tile-size.
-        y_start = random.randint(-3*y_tile_size4, -y_tile_size4)
+        y_start = random.randint(-3 * y_tile_size4, -y_tile_size4)
 
         while y_start < y_max:
             # End-position for the current tile.
