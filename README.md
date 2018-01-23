@@ -5,9 +5,9 @@ Therefore, a method is developed to generate a lot of images with varying parame
 
 The code in this repository is based on [Hvass Labs Tutorials](https://github.com/Hvass-Labs/TensorFlow-Tutorials).
 
-![Example 1 for urban people]("https://github.com/StefanTippelt/deep-dream-viz/blob/master/src/img/blended_pictures/urban_people1.jpg")
-![Example 2 for urban people]("https://github.com/StefanTippelt/deep-dream-viz/blob/master/src/img/blended_pictures/urban_people2.jpg")
-![Example 3 for urban people]("https://github.com/StefanTippelt/deep-dream-viz/blob/master/src/img/blended_pictures/urban_people3.jpg")
+![Example 1 for urban people](https://github.com/StefanTippelt/deep-dream-viz/blob/master/src/img/blended_pictures/urban_people1.jpg)
+![Example 2 for urban people](https://github.com/StefanTippelt/deep-dream-viz/blob/master/src/img/blended_pictures/urban_people2.jpg)
+![Example 3 for urban people](https://github.com/StefanTippelt/deep-dream-viz/blob/master/src/img/blended_pictures/urban_people3.jpg)
 
 ## Required Packages
 
