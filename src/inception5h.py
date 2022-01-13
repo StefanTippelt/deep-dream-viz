@@ -95,10 +95,10 @@ class Inception5h:
 
             # Open the graph-def file for binary reading.
             path = os.path.join(data_dir, path_graph_def)
-            with tf.gfile.FastGFile(path, 'rb') as file:
+            with tf.io.gfile.GFile(path, 'rb') as file:
                 # The graph-def is a saved copy of a TensorFlow graph.
                 # First we need to create an empty graph-def.
-                graph_def = tf.GraphDef()
+                graph_def = tf.compat.v1.GraphDef()
 
                 # Then we load the proto-buf file into the graph-def.
                 graph_def.ParseFromString(file.read())
